@@ -22,6 +22,7 @@
 		494EA1C21A6647C000631C1F /* 8.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 494EA1B81A6647C000631C1F /* 8.jpg */; };
 		494EA1C31A6647C000631C1F /* 9.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 494EA1B91A6647C000631C1F /* 9.jpg */; };
 		494EA1C41A6647C000631C1F /* 10.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 494EA1BA1A6647C000631C1F /* 10.jpg */; };
+		494EA1C71A66486A00631C1F /* ImagesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 494EA1C61A66486A00631C1F /* ImagesTableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,8 @@
 		494EA1B81A6647C000631C1F /* 8.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 8.jpg; sourceTree = "<group>"; };
 		494EA1B91A6647C000631C1F /* 9.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 9.jpg; sourceTree = "<group>"; };
 		494EA1BA1A6647C000631C1F /* 10.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 10.jpg; sourceTree = "<group>"; };
+		494EA1C51A66486A00631C1F /* ImagesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImagesTableViewController.h; sourceTree = "<group>"; };
+		494EA1C61A66486A00631C1F /* ImagesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImagesTableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,10 +99,12 @@
 		494EA1891A66477F00631C1F /* Blocstagram */ = {
 			isa = PBXGroup;
 			children = (
+				494EA1C51A66486A00631C1F /* ImagesTableViewController.h */,
+				494EA1C61A66486A00631C1F /* ImagesTableViewController.m */,
+				494EA18A1A66477F00631C1F /* Supporting Files */,
 				494EA1B01A6647A800631C1F /* Images */,
 				494EA1971A66478000631C1F /* Images.xcassets */,
 				494EA1991A66478000631C1F /* LaunchScreen.xib */,
-				494EA18A1A66477F00631C1F /* Supporting Files */,
 			);
 			path = Blocstagram;
 			sourceTree = "<group>";
@@ -258,6 +263,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				494EA1C71A66486A00631C1F /* ImagesTableViewController.m in Sources */,
 				494EA1901A66477F00631C1F /* AppDelegate.m in Sources */,
 				494EA18D1A66477F00631C1F /* main.m in Sources */,
 			);
