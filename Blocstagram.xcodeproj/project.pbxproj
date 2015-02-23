@@ -28,6 +28,7 @@
 		494EA1D01A68E8BF00631C1F /* Comment.m in Sources */ = {isa = PBXBuildFile; fileRef = 494EA1CF1A68E8BF00631C1F /* Comment.m */; };
 		494EA1D31A68E93100631C1F /* DataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 494EA1D21A68E93100631C1F /* DataSource.m */; };
 		494EA1D61A6CBBC000631C1F /* MediaTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 494EA1D51A6CBBC000631C1F /* MediaTableViewCell.m */; };
+		49FE17901A98DF10001472EA /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49FE178F1A98DF10001472EA /* LoginViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +74,8 @@
 		494EA1D21A68E93100631C1F /* DataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataSource.m; sourceTree = "<group>"; };
 		494EA1D41A6CBBC000631C1F /* MediaTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaTableViewCell.h; path = ../MediaTableViewCell.h; sourceTree = "<group>"; };
 		494EA1D51A6CBBC000631C1F /* MediaTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MediaTableViewCell.m; path = ../MediaTableViewCell.m; sourceTree = "<group>"; };
+		49FE178E1A98DF10001472EA /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
+		49FE178F1A98DF10001472EA /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +117,8 @@
 		494EA1891A66477F00631C1F /* Blocstagram */ = {
 			isa = PBXGroup;
 			children = (
+				49FE178E1A98DF10001472EA /* LoginViewController.h */,
+				49FE178F1A98DF10001472EA /* LoginViewController.m */,
 				494EA1C51A66486A00631C1F /* ImagesTableViewController.h */,
 				494EA1C61A66486A00631C1F /* ImagesTableViewController.m */,
 				494EA1D41A6CBBC000631C1F /* MediaTableViewCell.h */,
@@ -293,6 +298,7 @@
 				494EA1D61A6CBBC000631C1F /* MediaTableViewCell.m in Sources */,
 				494EA1CD1A68E80600631C1F /* Media.m in Sources */,
 				494EA1C71A66486A00631C1F /* ImagesTableViewController.m in Sources */,
+				49FE17901A98DF10001472EA /* LoginViewController.m in Sources */,
 				494EA1D31A68E93100631C1F /* DataSource.m in Sources */,
 				494EA1901A66477F00631C1F /* AppDelegate.m in Sources */,
 				494EA18D1A66477F00631C1F /* main.m in Sources */,
