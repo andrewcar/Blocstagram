@@ -93,6 +93,8 @@ static NSParagraphStyle *paragraphStyle;
 //                                                                        multiplier:1
 //                                                                          constant:100];
 //        [self.contentView addConstraints:@[self.imageHeightConstraint, self.usernameAndCaptionLabelConstraint, self.commentLabelHeightConstraint]];
+        
+        
         NSDictionary *viewDictionary = NSDictionaryOfVariableBindings(_mediaImageView, _usernameAndCaptionLabel, _commentLabel);
         [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_mediaImageView]|" options:NSLayoutFormatAlignAllTop | NSLayoutFormatAlignAllBottom metrics:nil views:viewDictionary]];
         [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_usernameAndCaptionLabel]|" options:NSLayoutFormatAlignAllTop | NSLayoutFormatAlignAllBottom metrics:nil views:viewDictionary]];
@@ -210,24 +212,24 @@ static NSParagraphStyle *paragraphStyle;
     return CGRectGetMaxY(layoutCell.commentLabel.frame);
 }
 
-- (CGSize)sizeOfString:(NSAttributedString *)string {
-    CGSize maxSize = CGSizeMake(CGRectGetWidth(self.contentView.bounds), 0.0);
-    CGRect sizeRect = [string boundingRectWithSize:maxSize options:NSStringDrawingUsesLineFragmentOrigin context:nil];
-    sizeRect.size.height += 20;
-    sizeRect = CGRectIntegral(sizeRect);
-    return sizeRect.size;
-}
+//- (CGSize)sizeOfString:(NSAttributedString *)string {
+//    CGSize maxSize = CGSizeMake(CGRectGetWidth(self.contentView.bounds), 0.0);
+//    CGRect sizeRect = [string boundingRectWithSize:maxSize options:NSStringDrawingUsesLineFragmentOrigin context:nil];
+//    sizeRect.size.height += 20;
+//    sizeRect = CGRectIntegral(sizeRect);
+//    return sizeRect.size;
+//}
 
 - (void)awakeFromNib {
     // Initialization code
 }
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
-    [super setHighlighted:YES animated:animated];
+    [super setHighlighted:NO animated:animated];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:YES animated:animated];
+    [super setSelected:NO animated:animated];
     // Configure the view for the selected state
 }
 

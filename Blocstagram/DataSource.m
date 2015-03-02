@@ -163,7 +163,11 @@
         self.isRefreshing = YES;
         
         NSString *minID = [[self.mediaItems firstObject] idNumber];
-        NSDictionary *parameters = @{@"min_id": minID};
+        NSDictionary *parameters = nil;
+        
+        if (self.mediaItems.count) {
+            parameters = @{@"min_id": minID};
+        }
         
         [self populateDataWithParameters:parameters completionHandler:^(NSError *error) {
             self.isRefreshing = NO;
