@@ -11,6 +11,7 @@
 #import "User.h"
 #import "Media.h"
 #import "Comment.h"
+#import <UICKeyChainStore.h>
 
 @interface DataSource() {
     NSMutableArray *_mediaItems;
@@ -39,7 +40,45 @@
     self = [super init];
     
     if (self) {
-        [self registerForAccessTokenNotification];
+        self.accessToken = [UICKeyChainStore stringForKey:@"access token"];
+        
+        // if there is no access token...
+        if (!self.accessToken) {
+            // get an access token
+            [self registerForAccessTokenNotification];
+            // if there is access token...
+        } else {
+            // make a side queue of default priority
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                // make a string of the path for mediaItems
+                NSString *fullPath = [self pathForFilename:NSStringFromSelector(@selector(mediaItems))];
+                // make an array for the string path to mediaItems
+                NSArray *storedMediaItems = [NSKeyedUnarchiver unarchiveObjectWithFile:fullPath];
+                
+                // go back to main queue
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    // if storedMediaItems is not empty...
+                    if (storedMediaItems.count > 0) {
+                        // make a mutable array for the storedMediaItems
+                        NSMutableArray *mutableMediaItems = [storedMediaItems mutableCopy];
+                        
+                        // check for new items
+                        [self requestNewItemsWithCompletionHandler:nil];
+                        
+                        // inform self for KVO that mediaItems will change
+                        [self willChangeValueForKey:@"mediaItems"];
+                        // set mediaItems to the content of the mutable array
+                        self.mediaItems = mutableMediaItems;
+                        // inform self for KVO that mediaItems did change
+                        [self didChangeValueForKey:@"mediaItems"];
+                        // if storedMediaItems is empty...
+                    } else {
+                        // populate it
+                        [self populateDataWithParameters:nil completionHandler:nil];
+                    }
+                });
+            });
+        }
     }
     return self;
 }
@@ -128,6 +167,24 @@
         self.mediaItems = tmpMediaItems;
         [self didChangeValueForKey:@"mediaItems"];
     }
+    
+    if (tmpMediaItems.count > 0) {
+        // Write the changes to disk
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSUInteger numberOfItemsToSave = MIN(self.mediaItems.count, 50);
+            NSArray *mediaItemsToSave = [self.mediaItems subarrayWithRange:NSMakeRange(0, numberOfItemsToSave)];
+            
+            NSString *fullPath = [self pathForFilename:NSStringFromSelector(@selector(mediaItems))];
+            NSData *mediaItemData = [NSKeyedArchiver archivedDataWithRootObject:mediaItemsToSave];
+            
+            NSError *dataError;
+            BOOL wroteSuccessfully = [mediaItemData writeToFile:fullPath options:NSDataWritingAtomic | NSDataWritingFileProtectionCompleteUnlessOpen error:&dataError];
+            
+            if (!wroteSuccessfully) {
+                NSLog(@"Couldn't write file: %@", dataError);
+            }
+        });
+    }
 }
 
 - (void)downloadImageForMediaItem:(Media *)mediaItem {
@@ -159,17 +216,25 @@
 }
 
 - (void)requestNewItemsWithCompletionHandler:(NewItemCompletionBlock)completionHandler {
+    // if pull to refresh is not happening...
     if (self.isRefreshing == NO) {
+        // tell self that pull to refresh is happening
         self.isRefreshing = YES;
         
+        // make a string called minID of the idNumber of the first object in mediaItems
         NSString *minID = [[self.mediaItems firstObject] idNumber];
+        // make a dictionary called parameters and set it to nil
         NSDictionary *parameters = nil;
         
+        // if mediaItems is not empty...
         if (self.mediaItems.count) {
+            // set parameters up for minID
             parameters = @{@"min_id": minID};
         }
         
+        // populate with items using parameters
         [self populateDataWithParameters:parameters completionHandler:^(NSError *error) {
+            // tell self that pull to refresh is no longer happening
             self.isRefreshing = NO;
             
             if (completionHandler) {
@@ -177,6 +242,7 @@
             }
         }];
     }
+    // tell self that there are older messages
     self.thereAreNoMoreOlderMessages = NO;
 }
 
@@ -237,10 +303,18 @@
 - (void)registerForAccessTokenNotification {
     [[NSNotificationCenter defaultCenter] addObserverForName:LoginViewControllerDidGetAccessTokenNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
         self.accessToken = note.object;
+        [UICKeyChainStore setString:self.accessToken forKey:@"access token"];
         
         // Get a token, populate the initial data
         [self populateDataWithParameters:nil completionHandler:nil];
     }];
+}
+
+- (NSString *)pathForFilename:(NSString *)filename {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths firstObject];
+    NSString *dataPath = [documentsDirectory stringByAppendingPathComponent:filename];
+    return dataPath;
 }
 
 @end
