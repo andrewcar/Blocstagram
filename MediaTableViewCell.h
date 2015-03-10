@@ -16,6 +16,8 @@
 
 - (void)cell:(MediaTableViewCell *)cell didLongPressImageView:(UIImageView *)imageView;
 
+- (void)cell:(MediaTableViewCell *)cell didDoubleTapImageView:(UIImageView *)imageView;
+
 @end
 
 @interface MediaTableViewCell : UITableViewCell

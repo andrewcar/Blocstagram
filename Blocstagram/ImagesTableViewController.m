@@ -66,7 +66,8 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     MediaTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"mediaCell" forIndexPath:indexPath];
     cell.delegate = self;
-    cell.mediaItem = [DataSource sharedInstance].mediaItems[indexPath.row];
+//    cell.mediaItem = [DataSource sharedInstance].mediaItems[indexPath.row];
+    cell.mediaItem = [self items][indexPath.row];
     return cell;
 }
 
@@ -127,6 +128,10 @@
         UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:itemsToShare applicationActivities:nil];
         [self presentViewController:activityVC animated:YES completion:nil];
     }
+}
+
+- (void)cell:(MediaTableViewCell *)cell didDoubleTapImageView:(UIImageView *)imageView {
+    [[DataSource sharedInstance] downloadImageForMediaItem:cell.mediaItem];
 }
 
 #pragma mark - UIViewControllerTransitioningDelegate

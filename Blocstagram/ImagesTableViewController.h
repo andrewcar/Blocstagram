@@ -8,10 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol ImagesTableViewControllerDelegate <NSObject>
-
-@end
-
 @interface ImagesTableViewController : UITableViewController
 
 @end
