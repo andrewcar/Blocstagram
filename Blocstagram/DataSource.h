@@ -21,11 +21,11 @@ typedef void (^NewItemCompletionBlock)(NSError *error);
 
 - (void)deleteMediaItem:(Media *)item;
 
-- (void)downloadImageForMediaItem:(Media *)mediaItem;
-
 - (void)requestNewItemsWithCompletionHandler:(NewItemCompletionBlock)completionHandler;
 
 - (void)requestOldItemsWithCompletionHandler:(NewItemCompletionBlock)completionHandler;
+
+- (void)downloadImageForMediaItem:(Media *)mediaItem;
 
 + (NSString *)instagramClientID;
 

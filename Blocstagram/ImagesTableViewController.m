@@ -63,10 +63,16 @@
     return [DataSource sharedInstance].mediaItems.count;
 }
 
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    Media *mediaItem = [DataSource sharedInstance].mediaItems[indexPath.row];
+    if (mediaItem.downloadState == MediaDownloadStateNeedsImage) {
+        [[DataSource sharedInstance] downloadImageForMediaItem:mediaItem];
+    }
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     MediaTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"mediaCell" forIndexPath:indexPath];
     cell.delegate = self;
-//    cell.mediaItem = [DataSource sharedInstance].mediaItems[indexPath.row];
     cell.mediaItem = [self items][indexPath.row];
     return cell;
 }
@@ -97,6 +103,29 @@
         return 350;
     } else {
         return 150;
+    }
+}
+
+#pragma mark - UIScrollViewDelegate
+
+- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView {
+    
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    [self infiniteScrollIfNecessary];
+}
+
+- (void)infiniteScrollIfNecessary {
+    NSIndexPath *bottomIndexPath = [[self.tableView indexPathsForVisibleRows] lastObject];
+    
+    if (bottomIndexPath && bottomIndexPath.row == [DataSource sharedInstance].mediaItems.count - 1) {
+        // The very last cell is on screen
+        [[DataSource sharedInstance] requestOldItemsWithCompletionHandler:nil];
     }
 }
 
@@ -205,22 +234,6 @@
         [sender endRefreshing];
     }];
 }
-
-#pragma mark - UIScrollViewDelegate
-
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    [self infiniteScrollIfNecessary];
-}
-
-- (void)infiniteScrollIfNecessary {
-    NSIndexPath *bottomIndexPath = [[self.tableView indexPathsForVisibleRows] lastObject];
-    
-    if (bottomIndexPath && bottomIndexPath.row == [DataSource sharedInstance].mediaItems.count - 1) {
-        // The very last cell is on screen
-        [[DataSource sharedInstance] requestOldItemsWithCompletionHandler:nil];
-    }
-}
-
 
 
 /*

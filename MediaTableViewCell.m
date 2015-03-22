@@ -68,6 +68,8 @@ static NSParagraphStyle *paragraphStyle;
         [self.mediaImageView addGestureRecognizer:self.doubleTapGestureRecognizer];
         
         self.usernameAndCaptionLabel = [[UILabel alloc] init];
+        self.usernameAndCaptionLabel.numberOfLines = 4;
+        
         self.commentLabel = [[UILabel alloc] init];
         self.commentLabel.numberOfLines = 0;
         
@@ -141,7 +143,7 @@ static NSParagraphStyle *paragraphStyle;
     _mediaItem = mediaItem;
     self.mediaImageView.image = _mediaItem.image;
     self.usernameAndCaptionLabel.attributedText = [self usernameAndCaptionString];
-    self.usernameAndCaptionLabel.numberOfLines = 2;
+    self.usernameAndCaptionLabel.numberOfLines = 3;
     self.commentLabel.attributedText = [self commentString];
 }
 
@@ -174,7 +176,8 @@ static NSParagraphStyle *paragraphStyle;
     
     layoutCell.mediaItem = mediaItem;
     
-    layoutCell.frame = CGRectMake(0, 0, width, CGRectGetHeight(layoutCell.frame));
+//    layoutCell.frame = CGRectMake(0, 0, width, CGRectGetHeight(layoutCell.frame));
+    layoutCell.frame = CGRectMake(0, 0, width, 700);
     
     [layoutCell setNeedsLayout];
     [layoutCell layoutIfNeeded];
@@ -215,7 +218,7 @@ static NSParagraphStyle *paragraphStyle;
     [super setHighlighted:NO animated:animated];
 }
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+- (void)setSelected:(BOOL)selected  animated:(BOOL)animated {
     [super setSelected:NO animated:animated];
     // Configure the view for the selected state
 }

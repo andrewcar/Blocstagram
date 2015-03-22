@@ -42,7 +42,7 @@
     self = [super init];
     
     if (self) {
-        NSURL *baseURL = [NSURL URLWithString:@"http://api.instagram.com/v1/"];
+        NSURL *baseURL = [NSURL URLWithString:@"https://api.instagram.com/v1/"];
         self.instagramOperationManager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
         
         AFJSONResponseSerializer *jsonSerializer = [AFJSONResponseSerializer serializer];
@@ -124,41 +124,68 @@
 }
 
 - (void)parseDataFromFeedDictionary:(NSDictionary *)feedDictionary fromRequestWithParameters:(NSDictionary *)parameters {
+    
+    // create an array called mediaArray from the feedDictionary
     NSArray *mediaArray = feedDictionary[@"data"];
+    
+    // create an empty mutable array called tmpMediaItems
     NSMutableArray *tmpMediaItems = [NSMutableArray array];
     
+    // for a dictionary called mediaDictionary in mediaArray...
     for (NSDictionary *mediaDictionary in mediaArray) {
+        
+        // create a mediaItem, allocate it, initialize it with mediaDictionary
         Media *mediaItem = [[Media alloc] initWithDictionary:mediaDictionary];
         
+        // if mediaItem exists...
         if (mediaItem) {
+            
+            // add it to tmpMediaItems mutable array
             [tmpMediaItems addObject:mediaItem];
-            [self downloadImageForMediaItem:mediaItem];
+            
+            // download the image for mediaItem
+//            [self downloadImageForMediaItem:mediaItem];
         }
     }
+    
+    // create a mutable array with KVO
     NSMutableArray *mutableArrayWithKVO = [self mutableArrayValueForKey:@"mediaItems"];
     
+    // if it was a pull-to-refresh request...
     if (parameters[@"min_id"]) {
-        // This was a pull-to-refresh request
-        
+
+        // create an NSRange called rangeOfIndexes from 0 to the count of tmpMediaItems
         NSRange rangeOfIndexes = NSMakeRange(0, tmpMediaItems.count);
+        
+        // create an NSIndexSet called indexSetOfNewObjects with rangeOfIndexes
         NSIndexSet *indexSetOfNewObjects = [NSIndexSet indexSetWithIndexesInRange:rangeOfIndexes];
         
+        // insert tmpMediaItems at the indexSetOfNewObjects in the mutable array with KVO
         [mutableArrayWithKVO insertObjects:tmpMediaItems atIndexes:indexSetOfNewObjects];
-    } else if (parameters[@"max_id"]) {
-        // This was an infinite scroll request
         
+        // else if it was an infinite scroll request...
+    } else if (parameters[@"max_id"]) {
+
+        // if tmpMediaItems is empty...
         if (tmpMediaItems.count == 0) {
+            
             // disable infinite scroll, since there are no more older messages
             self.thereAreNoMoreOlderMessages = YES;
         }
+        
+        // add all tmpMediaItems to the mutable array with KVO
         [mutableArrayWithKVO addObjectsFromArray:tmpMediaItems];
     } else {
+        
+        // else, notify KVO that self.mediaItems will be set to tmpMediaItems, then notify KVO that it happened
         [self willChangeValueForKey:@"mediaItems"];
         self.mediaItems = tmpMediaItems;
         [self didChangeValueForKey:@"mediaItems"];
     }
     
+    // if tmpMediaItems is not empty...
     if (tmpMediaItems.count > 0) {
+        
         // Write the changes to disk
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSUInteger numberOfItemsToSave = MIN(self.mediaItems.count, 50);
@@ -179,17 +206,40 @@
 
 - (void)downloadImageForMediaItem:(Media *)mediaItem {
     if (mediaItem.mediaURL && !mediaItem.image) {
+        mediaItem.downloadState = MediaDownloadStateDownloadInProgress;
         [self.instagramOperationManager GET:mediaItem.mediaURL.absoluteString
                                  parameters:nil
                                     success:^(AFHTTPRequestOperation *operation, id responseObject) {
                                         if ([responseObject isKindOfClass:[UIImage class]]) {
                                             mediaItem.image = responseObject;
+                                            mediaItem.downloadState = MediaDownloadStateHasImage;
                                             NSMutableArray *mutableArrayForKVO = [self mutableArrayValueForKey:@"mediaItems"];
                                             NSUInteger index = [mutableArrayForKVO indexOfObject:mediaItem];
                                             [mutableArrayForKVO replaceObjectAtIndex:index withObject:mediaItem];
+                                        } else {
+                                            mediaItem.downloadState = MediaDownloadStateNonRecoverableError;
                                         }
                                     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                        NSLog(@"Failure downloading image: %@", error);
+                                        NSLog(@"Error downloading image: %@", error);
+                                        
+                                        mediaItem.downloadState = MediaDownloadStateNonRecoverableError;
+                                        
+                                        if ([error.domain isEqualToString:NSURLErrorDomain]) {
+                                            // A networking problem
+                                            if (error.code == NSURLErrorTimedOut ||
+                                                error.code == NSURLErrorCancelled ||
+                                                error.code == NSURLErrorCannotConnectToHost ||
+                                                error.code == NSURLErrorNetworkConnectionLost ||
+                                                error.code == NSURLErrorNotConnectedToInternet ||
+                                                error.code == kCFURLErrorInternationalRoamingOff ||
+                                                error.code == kCFURLErrorCallIsActive ||
+                                                error.code == kCFURLErrorDataNotAllowed ||
+                                                error.code == kCFURLErrorRequestBodyStreamExhausted) {
+                                                
+                                                // It might work if we try again
+                                                mediaItem.downloadState = MediaDownloadStateNeedsImage;
+                                            }
+                                        }
                                     }];
     }
 }
