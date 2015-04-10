@@ -18,6 +18,8 @@
 
 - (void)cell:(MediaTableViewCell *)cell didDoubleTapImageView:(UIImageView *)imageView;
 
+- (void)cellDidPressLikeButton:(MediaTableViewCell *)cell;
+
 @end
 
 @interface MediaTableViewCell : UITableViewCell

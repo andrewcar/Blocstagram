@@ -109,11 +109,21 @@
 #pragma mark - UIScrollViewDelegate
 
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView {
-    
+    for (MediaTableViewCell *cell in self.tableView.visibleCells) {
+        Media *mediaItem = cell.mediaItem;
+        if (mediaItem.downloadState == MediaDownloadStateNeedsImage) {
+            [[DataSource sharedInstance] downloadImageForMediaItem:mediaItem];
+        }
+    }
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    
+    for (MediaTableViewCell *cell in self.tableView.visibleCells) {
+        Media *mediaItem = cell.mediaItem;
+        if (mediaItem.downloadState == MediaDownloadStateNeedsImage) {
+            [[DataSource sharedInstance] downloadImageForMediaItem:mediaItem];
+        }
+    }
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
@@ -161,6 +171,11 @@
 
 - (void)cell:(MediaTableViewCell *)cell didDoubleTapImageView:(UIImageView *)imageView {
     [[DataSource sharedInstance] downloadImageForMediaItem:cell.mediaItem];
+}
+
+- (void)cellDidPressLikeButton:(MediaTableViewCell *)cell {
+    [[DataSource sharedInstance] toggleLikeOnMediaItem:cell.mediaItem];
+    [[DataSource sharedInstance] updateLikeCountForMediaItem:cell.mediaItem];
 }
 
 #pragma mark - UIViewControllerTransitioningDelegate

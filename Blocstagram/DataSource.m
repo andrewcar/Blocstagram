@@ -44,49 +44,29 @@
     if (self) {
         NSURL *baseURL = [NSURL URLWithString:@"https://api.instagram.com/v1/"];
         self.instagramOperationManager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:baseURL];
-        
         AFJSONResponseSerializer *jsonSerializer = [AFJSONResponseSerializer serializer];
-        
         AFImageResponseSerializer *imageSerializer = [AFImageResponseSerializer serializer];
         imageSerializer.imageScale = 1.0;
-        
         AFCompoundResponseSerializer *serializer = [AFCompoundResponseSerializer compoundSerializerWithResponseSerializers:@[jsonSerializer, imageSerializer]];
         self.instagramOperationManager.responseSerializer = serializer;
-        
         self.accessToken = [UICKeyChainStore stringForKey:@"access token"];
         
-        // if there is no access token...
         if (!self.accessToken) {
-            // get an access token
             [self registerForAccessTokenNotification];
-            // if there is access token...
         } else {
-            // make a side queue of default priority
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                // make a string of the path for mediaItems
                 NSString *fullPath = [self pathForFilename:NSStringFromSelector(@selector(mediaItems))];
-                // make an array for the string path to mediaItems
                 NSArray *storedMediaItems = [NSKeyedUnarchiver unarchiveObjectWithFile:fullPath];
-                
-                // go back to main queue
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    // if storedMediaItems is not empty...
+
                     if (storedMediaItems.count > 0) {
-                        // make a mutable array for the storedMediaItems
                         NSMutableArray *mutableMediaItems = [storedMediaItems mutableCopy];
-                        
-                        // check for new items
                         [self requestNewItemsWithCompletionHandler:nil];
                         
-                        // inform self for KVO that mediaItems will change
                         [self willChangeValueForKey:@"mediaItems"];
-                        // set mediaItems to the content of the mutable array
                         self.mediaItems = mutableMediaItems;
-                        // inform self for KVO that mediaItems did change
                         [self didChangeValueForKey:@"mediaItems"];
-                        // if storedMediaItems is empty...
                     } else {
-                        // populate it
                         [self populateDataWithParameters:nil completionHandler:nil];
                     }
                 });
@@ -98,12 +78,8 @@
 
 - (void)populateDataWithParameters:(NSDictionary *)parameters completionHandler:(NewItemCompletionBlock)completionHandler {
     if (self.accessToken) {
-        // only try to get the data if there's an access token
-        
         NSMutableDictionary *mutableParameters = [@{@"access_token": self.accessToken} mutableCopy];
-        
         [mutableParameters addEntriesFromDictionary:parameters];
-        
         [self.instagramOperationManager GET:@"users/self/feed"
                                  parameters:mutableParameters
                                     success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -124,66 +100,35 @@
 }
 
 - (void)parseDataFromFeedDictionary:(NSDictionary *)feedDictionary fromRequestWithParameters:(NSDictionary *)parameters {
-    
-    // create an array called mediaArray from the feedDictionary
     NSArray *mediaArray = feedDictionary[@"data"];
-    
-    // create an empty mutable array called tmpMediaItems
     NSMutableArray *tmpMediaItems = [NSMutableArray array];
     
-    // for a dictionary called mediaDictionary in mediaArray...
     for (NSDictionary *mediaDictionary in mediaArray) {
-        
-        // create a mediaItem, allocate it, initialize it with mediaDictionary
         Media *mediaItem = [[Media alloc] initWithDictionary:mediaDictionary];
         
-        // if mediaItem exists...
         if (mediaItem) {
-            
-            // add it to tmpMediaItems mutable array
             [tmpMediaItems addObject:mediaItem];
-            
-            // download the image for mediaItem
-//            [self downloadImageForMediaItem:mediaItem];
+            [self downloadImageForMediaItem:mediaItem];
         }
     }
-    
-    // create a mutable array with KVO
     NSMutableArray *mutableArrayWithKVO = [self mutableArrayValueForKey:@"mediaItems"];
     
-    // if it was a pull-to-refresh request...
     if (parameters[@"min_id"]) {
-
-        // create an NSRange called rangeOfIndexes from 0 to the count of tmpMediaItems
         NSRange rangeOfIndexes = NSMakeRange(0, tmpMediaItems.count);
-        
-        // create an NSIndexSet called indexSetOfNewObjects with rangeOfIndexes
         NSIndexSet *indexSetOfNewObjects = [NSIndexSet indexSetWithIndexesInRange:rangeOfIndexes];
-        
-        // insert tmpMediaItems at the indexSetOfNewObjects in the mutable array with KVO
         [mutableArrayWithKVO insertObjects:tmpMediaItems atIndexes:indexSetOfNewObjects];
-        
-        // else if it was an infinite scroll request...
     } else if (parameters[@"max_id"]) {
 
-        // if tmpMediaItems is empty...
         if (tmpMediaItems.count == 0) {
-            
-            // disable infinite scroll, since there are no more older messages
             self.thereAreNoMoreOlderMessages = YES;
         }
-        
-        // add all tmpMediaItems to the mutable array with KVO
         [mutableArrayWithKVO addObjectsFromArray:tmpMediaItems];
     } else {
-        
-        // else, notify KVO that self.mediaItems will be set to tmpMediaItems, then notify KVO that it happened
         [self willChangeValueForKey:@"mediaItems"];
         self.mediaItems = tmpMediaItems;
         [self didChangeValueForKey:@"mediaItems"];
     }
     
-    // if tmpMediaItems is not empty...
     if (tmpMediaItems.count > 0) {
         
         // Write the changes to disk
@@ -245,25 +190,15 @@
 }
 
 - (void)requestNewItemsWithCompletionHandler:(NewItemCompletionBlock)completionHandler {
-    // if pull to refresh is not happening...
     if (self.isRefreshing == NO) {
-        // tell self that pull to refresh is happening
         self.isRefreshing = YES;
-        
-        // make a string called minID of the idNumber of the first object in mediaItems
         NSString *minID = [[self.mediaItems firstObject] idNumber];
-        // make a dictionary called parameters and set it to nil
         NSDictionary *parameters = nil;
-        
-        // if mediaItems is not empty...
+
         if (self.mediaItems.count) {
-            // set parameters up for minID
             parameters = @{@"min_id": minID};
         }
-        
-        // populate with items using parameters
         [self populateDataWithParameters:parameters completionHandler:^(NSError *error) {
-            // tell self that pull to refresh is no longer happening
             self.isRefreshing = NO;
             
             if (completionHandler) {
@@ -271,7 +206,6 @@
             }
         }];
     }
-    // tell self that there are older messages
     self.thereAreNoMoreOlderMessages = NO;
 }
 
@@ -295,6 +229,66 @@
 - (void)deleteMediaItem:(Media *)item {
     NSMutableArray *mutableArrayWithKVO = [self mutableArrayValueForKey:@"mediaItems"];
     [mutableArrayWithKVO removeObject:item];
+}
+
+#pragma mark - Liking Media Items
+
+- (void)toggleLikeOnMediaItem:(Media *)mediaItem {
+    NSString *urlString = [NSString stringWithFormat:@"media/%@/likes", mediaItem.idNumber];
+    NSDictionary *parameters = @{@"access_token": self.accessToken};
+    
+    if (mediaItem.likeState == LikeStateNotLiked) {
+        mediaItem.likeState = LikeStateLiking;
+
+        [self.instagramOperationManager POST:urlString parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            mediaItem.likeState = LikeStateLiked;
+            
+            mediaItem.likeCount++;
+            
+            [self reloadMediaItems:mediaItem];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            mediaItem.likeState = LikeStateNotLiked;
+            [self reloadMediaItems:mediaItem];
+        }];
+    } else if (mediaItem.likeState == LikeStateLiked) {
+        mediaItem.likeState = LikeStateUnliking;
+
+        [self.instagramOperationManager DELETE:urlString parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            mediaItem.likeState = LikeStateNotLiked;
+            
+            mediaItem.likeCount--;
+            
+            [self reloadMediaItems:mediaItem];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            mediaItem.likeState = LikeStateLiked;
+            
+            [self reloadMediaItems:mediaItem];
+        }];
+    }
+    NSLog(@"toggleLikeOnMediaItem: fired");
+    [self reloadMediaItems:mediaItem];
+}
+
+- (void)updateLikeCountForMediaItem:(Media *)mediaItem {
+    NSString *urlString = [NSString stringWithFormat:@"media/%@/likes", mediaItem.idNumber];
+    NSDictionary *parameters = @{@"access_token": self.accessToken};
+    
+    [self.instagramOperationManager GET:urlString parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                mediaItem.likeCount = [[responseObject valueForKeyPath:@"data.likes.count"] count];
+                NSLog(@"%ld", (long)mediaItem.likeCount);
+            }
+            [self reloadMediaItems:mediaItem];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"failure");
+    }];
+    [self reloadMediaItems:mediaItem];
+}
+
+- (void)reloadMediaItems:(Media *)mediaItem {
+    NSMutableArray *mutableArrayWithKVO = [self mutableArrayValueForKey:@"mediaItems"];
+    NSUInteger index = [mutableArrayWithKVO indexOfObject:mediaItem];
+    [mutableArrayWithKVO replaceObjectAtIndex:index withObject:mediaItem];
 }
 
 #pragma mark - Key/Value Observing
