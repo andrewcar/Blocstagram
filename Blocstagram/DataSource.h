@@ -29,7 +29,7 @@ typedef void (^NewItemCompletionBlock)(NSError *error);
 
 - (void)toggleLikeOnMediaItem:(Media *)mediaItem;
 
-- (void)updateLikeCountForMediaItem:(Media *)mediaItem;
+- (void)commentOnMediaItem:(Media *)item withText:(NSString *)commentText;
 
 + (NSString *)instagramClientID;
 

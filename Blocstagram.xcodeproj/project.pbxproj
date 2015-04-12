@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4901DE471ABF278800AC7EDB /* CircleSpinnerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4901DE461ABF278800AC7EDB /* CircleSpinnerView.m */; };
 		4901DE4A1ABF30F200AC7EDB /* LikeButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 4901DE491ABF30F200AC7EDB /* LikeButton.m */; };
+		494DC95C1AD9B35200EDF352 /* ComposeCommentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 494DC95B1AD9B35200EDF352 /* ComposeCommentView.m */; };
 		494EA18D1A66477F00631C1F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 494EA18C1A66477F00631C1F /* main.m */; };
 		494EA1901A66477F00631C1F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 494EA18F1A66477F00631C1F /* AppDelegate.m */; };
 		494EA1981A66478000631C1F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 494EA1971A66478000631C1F /* Images.xcassets */; };
@@ -52,6 +53,8 @@
 		4901DE461ABF278800AC7EDB /* CircleSpinnerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CircleSpinnerView.m; sourceTree = "<group>"; };
 		4901DE481ABF30F200AC7EDB /* LikeButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LikeButton.h; sourceTree = "<group>"; };
 		4901DE491ABF30F200AC7EDB /* LikeButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LikeButton.m; sourceTree = "<group>"; };
+		494DC95A1AD9B35200EDF352 /* ComposeCommentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComposeCommentView.h; sourceTree = "<group>"; };
+		494DC95B1AD9B35200EDF352 /* ComposeCommentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComposeCommentView.m; sourceTree = "<group>"; };
 		494EA1871A66477F00631C1F /* Blocstagram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Blocstagram.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		494EA18B1A66477F00631C1F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		494EA18C1A66477F00631C1F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -158,6 +161,8 @@
 				4901DE461ABF278800AC7EDB /* CircleSpinnerView.m */,
 				4901DE481ABF30F200AC7EDB /* LikeButton.h */,
 				4901DE491ABF30F200AC7EDB /* LikeButton.m */,
+				494DC95A1AD9B35200EDF352 /* ComposeCommentView.h */,
+				494DC95B1AD9B35200EDF352 /* ComposeCommentView.m */,
 				494EA18A1A66477F00631C1F /* Supporting Files */,
 				494EA1B01A6647A800631C1F /* Images */,
 				494EA1971A66478000631C1F /* Images.xcassets */,
@@ -383,6 +388,7 @@
 				494EA1D31A68E93100631C1F /* DataSource.m in Sources */,
 				494EA1901A66477F00631C1F /* AppDelegate.m in Sources */,
 				4901DE4A1ABF30F200AC7EDB /* LikeButton.m in Sources */,
+				494DC95C1AD9B35200EDF352 /* ComposeCommentView.m in Sources */,
 				4901DE471ABF278800AC7EDB /* CircleSpinnerView.m in Sources */,
 				494EA18D1A66477F00631C1F /* main.m in Sources */,
 			);

@@ -269,26 +269,40 @@
     [self reloadMediaItems:mediaItem];
 }
 
-- (void)updateLikeCountForMediaItem:(Media *)mediaItem {
-    NSString *urlString = [NSString stringWithFormat:@"media/%@/likes", mediaItem.idNumber];
-    NSDictionary *parameters = @{@"access_token": self.accessToken};
-    
-    [self.instagramOperationManager GET:urlString parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                mediaItem.likeCount = [[responseObject valueForKeyPath:@"data.likes.count"] count];
-                NSLog(@"%ld", (long)mediaItem.likeCount);
-            }
-            [self reloadMediaItems:mediaItem];
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"failure");
-    }];
-    [self reloadMediaItems:mediaItem];
-}
-
 - (void)reloadMediaItems:(Media *)mediaItem {
     NSMutableArray *mutableArrayWithKVO = [self mutableArrayValueForKey:@"mediaItems"];
     NSUInteger index = [mutableArrayWithKVO indexOfObject:mediaItem];
     [mutableArrayWithKVO replaceObjectAtIndex:index withObject:mediaItem];
+}
+
+#pragma mark - Comments
+
+- (void)commentOnMediaItem:(Media *)mediaItem withText:(NSString *)commentText {
+    if (!commentText || commentText.length == 0) {
+        return;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"media/%@/comments", mediaItem.idNumber];
+    NSDictionary *parameters = @{@"access_token": self.accessToken, @"text": commentText};
+    
+    [self.instagramOperationManager POST:urlString parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        mediaItem.temporaryComment = nil;
+        
+        NSString *refreshMediaUrlString = [NSString stringWithFormat:@"media/%@", mediaItem.idNumber];
+        NSDictionary *parameters = @{@"access_token": self.accessToken};
+        [self.instagramOperationManager GET:refreshMediaUrlString parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            Media *newMediaItem = [[Media alloc] initWithDictionary:responseObject];
+            NSMutableArray *mutableArrayWithKVO = [self mutableArrayValueForKey:@"mediaItems"];
+            NSUInteger index = [mutableArrayWithKVO indexOfObject:mediaItem];
+            [mutableArrayWithKVO replaceObjectAtIndex:index withObject:newMediaItem];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            [self reloadMediaItems:mediaItem];
+        }];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %", error);
+        NSLog(@"Response: %@", operation.responseString);
+        [self reloadMediaItems:mediaItem];
+    }];
 }
 
 #pragma mark - Key/Value Observing
