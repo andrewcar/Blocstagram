@@ -12,7 +12,6 @@
 
 @interface MediaFullScreenViewController () <UIScrollViewDelegate>
 
-@property (nonatomic, strong) Media *media;
 @property (nonatomic, strong) UITapGestureRecognizer *tap;
 @property (nonatomic, strong) UITapGestureRecognizer *doubleTap;
 
@@ -55,21 +54,30 @@
     [self.scrollView addGestureRecognizer:self.tap];
     [self.scrollView addGestureRecognizer:self.doubleTap];
     
-    UIButton *shareButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [shareButton addTarget:self action:@selector(shareFired:) forControlEvents:UIControlEventTouchUpInside];
-    [shareButton setTitle:@"Share" forState:UIControlStateNormal];
-    shareButton.frame = CGRectMake(CGRectGetMaxX(self.view.bounds) - 74, -9, 75, 100);
-    shareButton.titleLabel.textColor = [UIColor blueColor];
-    shareButton.titleLabel.font = [UIFont systemFontOfSize:19];
-    [self.scrollView addSubview:shareButton];
+//    UIButton *shareButton = [UIButton buttonWithType:UIButtonTypeSystem];
+//    [shareButton addTarget:self action:@selector(shareFired:) forControlEvents:UIControlEventTouchUpInside];
+//    [shareButton setTitle:@"Share" forState:UIControlStateNormal];
+//    shareButton.frame = CGRectMake(CGRectGetMaxX(self.view.bounds) - 74, -9, 75, 4);
+//    shareButton.titleLabel.textColor = [UIColor blueColor];
+//    shareButton.titleLabel.font = [UIFont systemFontOfSize:19];
+//    [self.scrollView addSubview:shareButton];
 }
 
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
     self.scrollView.frame = self.view.frame;
-    
+    [self recalculateZoomScale];
+}
+
+- (void)recalculateZoomScale {
     CGSize scrollViewFrameSize = self.scrollView.frame.size;
     CGSize scrollViewContentSize = self.scrollView.contentSize;
+    
+    scrollViewContentSize.height /= self.scrollView.zoomScale;
+    scrollViewContentSize.width /= self.scrollView.zoomScale;
+    
+    
+    
     
     CGFloat scaleWidth = scrollViewFrameSize.width / scrollViewContentSize.width;
     CGFloat scaleHeight = scrollViewFrameSize.height / scrollViewContentSize.height;
@@ -104,11 +112,6 @@
         contentsFrame.origin.y = 55;
     }
     self.imageView.frame = contentsFrame;
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 #pragma mark - UIScrollViewDelegate
