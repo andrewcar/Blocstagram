@@ -59,15 +59,16 @@ static NSString * const reuseIdentifier = @"cell";
     [super viewWillLayoutSubviews];
     
     CGFloat width = CGRectGetWidth(self.view.frame);
-    CGFloat minWidth = 130;
-    NSInteger divisor = width / minWidth;
-    CGFloat cellSize = width / divisor;
+//    CGFloat minWidth = 130;
+//    NSInteger divisor = width / minWidth;
+//    CGFloat cellSize = width / divisor;
     
     UICollectionViewFlowLayout *flowLayout = (UICollectionViewFlowLayout *)self.collectionViewLayout;
-    flowLayout.itemSize = CGSizeMake(cellSize, cellSize);
-    flowLayout.minimumInteritemSpacing = 0;
-    flowLayout.minimumLineSpacing = 0;
-    flowLayout.headerReferenceSize = CGSizeMake(width, 15);
+//    flowLayout.itemSize = CGSizeMake(cellSize, cellSize);
+    flowLayout.minimumInteritemSpacing = 10;
+    flowLayout.minimumLineSpacing = 10;
+    flowLayout.headerReferenceSize = CGSizeMake(width, 10);
+    flowLayout.sectionInset = UIEdgeInsetsMake(10, 10, 10, 10);
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -214,10 +215,12 @@ static NSString * const reuseIdentifier = @"cell";
 
 #pragma mark - UIColletionViewDelegateFlowLayout
 
-//- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath; {
-//    CGSize size;
-//    return size;
-//}
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath; {
+    ALAsset *asset = self.arrayOfAssets[indexPath.section][indexPath.row];
+    CGImageRef imageRef = asset.thumbnail;
+    UIImage *image = [UIImage imageWithCGImage:imageRef];
+    return CGSizeMake((image.size.width*.77), (image.size.height*.77));
+}
 
 /*
 #pragma mark - Navigation

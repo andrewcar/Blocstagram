@@ -74,10 +74,11 @@
     
     self.cropBox.frame = CGRectMake(0, CGRectGetMaxY(self.topView.frame), width, width);
     
+    self.scrollView.frame = self.cropBox.frame;
     self.scrollView.center = self.cropBox.center;
     self.scrollView.clipsToBounds = NO;
     
-    [self recalculateZoomScale];
+//    [self recalculateZoomScale];
     
     if (self.hasLoadedOnce == NO ) {
         self.scrollView.zoomScale = self.scrollView.minimumZoomScale;

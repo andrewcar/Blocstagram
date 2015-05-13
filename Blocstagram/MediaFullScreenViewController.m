@@ -76,9 +76,6 @@
     scrollViewContentSize.height /= self.scrollView.zoomScale;
     scrollViewContentSize.width /= self.scrollView.zoomScale;
     
-    
-    
-    
     CGFloat scaleWidth = scrollViewFrameSize.width / scrollViewContentSize.width;
     CGFloat scaleHeight = scrollViewFrameSize.height / scrollViewContentSize.height;
     CGFloat minScale = MIN(scaleWidth, scaleHeight);
@@ -101,7 +98,7 @@
     if (contentsFrame.size.width < boundsSize.width) {
         contentsFrame.origin.x = (boundsSize.width - CGRectGetWidth(contentsFrame)) / 2;
     } else if (contentsFrame.size.width > boundsSize.width) {
-        contentsFrame.origin.x = -117;
+        contentsFrame.origin.x = -117; //-117
     } else {
         contentsFrame.origin.x = 0;
     }
@@ -109,7 +106,7 @@
     if (contentsFrame.size.height < boundsSize.height) {
         contentsFrame.origin.y = (boundsSize.height - CGRectGetWidth(contentsFrame)) / 2;
     } else {
-        contentsFrame.origin.y = 55;
+        contentsFrame.origin.y = 0; //55
     }
     self.imageView.frame = contentsFrame;
 }
