@@ -14,6 +14,8 @@ typedef void (^NewItemCompletionBlock)(NSError *error);
 
 @interface DataSource : NSObject
 
+extern NSString *const BLCImageFinishedNotification;
+
 @property (nonatomic, strong, readonly) NSMutableArray *mediaItems;
 @property (nonatomic, strong, readonly) NSString *accessToken;
 

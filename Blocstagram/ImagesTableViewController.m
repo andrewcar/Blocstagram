@@ -23,6 +23,7 @@
 @property (nonatomic, weak) UIImageView *lastTappedImageView;
 @property (nonatomic, weak) UIView *lastSelectedCommentView;
 @property (nonatomic, assign) CGFloat lastKeyboardAdjustment;
+@property (nonatomic, strong) UIPopoverController *cameraPopover;
 
 @end
 
@@ -54,6 +55,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(imageDidFinish:) name:BLCImageFinishedNotification object:nil];
     
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -177,8 +179,12 @@
     
     MediaFullScreenViewController *fullScreenVC = [[MediaFullScreenViewController alloc] initWithMedia:cell.mediaItem];
     
-    fullScreenVC.transitioningDelegate = self;
-    fullScreenVC.modalPresentationStyle = UIModalPresentationCustom;
+    if (isPhone) {
+        fullScreenVC.transitioningDelegate = self;
+        fullScreenVC.modalPresentationStyle = UIModalPresentationCustom;
+    } else {
+        fullScreenVC.modalPresentationStyle = UIModalPresentationFormSheet;
+    }
     
     [self presentViewController:fullScreenVC animated:YES completion:nil];
 }
@@ -196,7 +202,9 @@
     
     if (itemsToShare.count > 0) {
         UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:itemsToShare applicationActivities:nil];
-        [self presentViewController:activityVC animated:YES completion:nil];
+        UIPopoverController *popover = [[UIPopoverController alloc] initWithContentViewController:activityVC];
+        popover.popoverContentSize = CGSizeMake(200, 200);
+        [popover presentPopoverFromRect:CGRectMake(CGRectGetMidX(imageView.frame) - (imageView.image.size.width / 2), CGRectGetMidY(imageView.frame) - (imageView.image.size.height / 2), imageView.image.size.width, imageView.image.size.height) inView:imageView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     }
 }
 
@@ -307,7 +315,7 @@
 
 #pragma mark - Camera, CameraViewControllerDelegate, and ImageLibraryViewControllerDelegate
 
-- (void)cameraPressed:(UIButton *)sender {
+- (void)cameraPressed:(UIBarButtonItem *)sender {
     UIViewController *imageVC;
     
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
@@ -322,7 +330,14 @@
     
     if (imageVC) {
         UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:imageVC];
-        [self presentViewController:nav animated:YES completion:nil];
+        
+        if (isPhone) {
+            [self presentViewController:nav animated:YES completion:nil];
+        } else {
+            self.cameraPopover = [[UIPopoverController alloc] initWithContentViewController:nav];
+            self.cameraPopover.popoverContentSize = CGSizeMake(320, 568);
+            [self.cameraPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        }
     }
     return;
 }
@@ -333,6 +348,17 @@
 
 - (void)imageLibraryViewController:(ImageLibraryViewController *)imageLibraryViewController didCompleteWithImage:(UIImage *)image {
     [self handleImage:image withNavigationController:imageLibraryViewController.navigationController];
+}
+
+#pragma mark - Popover Handling
+
+- (void)didFinishWithImage:(NSNotification *)notification {
+    if (isPhone) {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    } else {
+        [self.cameraPopover dismissPopoverAnimated:YES];
+        self.cameraPopover = nil;
+    }
 }
 
 #pragma mark - Miscellaneous
@@ -394,7 +420,12 @@
         PostToInstagramViewController *postVC = [[PostToInstagramViewController alloc] initWithImage:image];
         [nav pushViewController:postVC animated:YES];
     } else {
-        [self dismissViewControllerAnimated:YES completion:nil];
+        if (isPhone) {
+            [self dismissViewControllerAnimated:YES completion:nil];
+        } else {
+            [self.cameraPopover dismissPopoverAnimated:YES];
+            self.cameraPopover = nil;
+        }
     }
 }
 

@@ -29,6 +29,8 @@
 
 @implementation DataSource
 
+NSString *const BLCImageFinishedNotification = @"BLCImageFinishedNotification";
+
 + (instancetype)sharedInstance {
     static dispatch_once_t once;
     static id sharedInstance;
@@ -299,7 +301,7 @@
             [self reloadMediaItems:mediaItem];
         }];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %", error);
+        NSLog(@"Error: %@", error);
         NSLog(@"Response: %@", operation.responseString);
         [self reloadMediaItems:mediaItem];
     }];

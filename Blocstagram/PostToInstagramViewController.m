@@ -8,6 +8,7 @@
 
 #import "PostToInstagramViewController.h"
 #import "FilterCollectionViewCell.h"
+#import "DataSource.h"
 
 @interface PostToInstagramViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UIAlertViewDelegate, UIDocumentInteractionControllerDelegate, FilterCollectionViewCellDelegate>
 
@@ -22,6 +23,8 @@
 
 @property (nonatomic, strong) UIButton *sendButton;
 @property (nonatomic, strong) UIBarButtonItem *sendBarButton;
+
+@property (nonatomic, strong) UIDocumentInteractionController *documentController;
 
 @end
 
@@ -82,11 +85,11 @@
     
     self.navigationItem.title = NSLocalizedString(@"Apply Filter", @"Apply filter view title");
     
-//    NSArray *supportedFilters = [CIFilter filterNamesInCategory:kCICategoryBuiltIn];
-//    
-//    for (int i=0; i<supportedFilters.count; i++) {
-//        NSLog(@"%@", supportedFilters[i]);
-//    }
+    NSArray *supportedFilters = [CIFilter filterNamesInCategory:kCICategoryBuiltIn];
+    
+    for (int i=0; i<supportedFilters.count; i++) {
+        NSLog(@"%@", supportedFilters[i]);
+    }
 }
 
 - (void)viewWillLayoutSubviews {
@@ -353,7 +356,7 @@
         CIFilter *tonalFilter = [CIFilter filterWithName:@"CIPhotoEffectTonal"];
         CIFilter *sepiaFilter = [CIFilter filterWithName:@"CISepiaTone"];
         
-        CIFilter *composite = [CIFilter filterWithName:@"CIColorBlendMode"];
+        CIFilter *composite = [CIFilter filterWithName:@"CIMinimumComponent"];
         if (tonalFilter && sepiaFilter && composite) {
             [tonalFilter setValue:sourceCIImage forKey:kCIInputImageKey];
             [composite setValue:tonalFilter.outputImage forKey:kCIInputImageKey];
@@ -380,20 +383,20 @@
             return;
         }
         
-        UIDocumentInteractionController *documentController = [UIDocumentInteractionController interactionControllerWithURL:fileURL];
-        documentController.UTI = @"com.instagram.exclusivegram";
-        documentController.delegate = self;
+        self.documentController = [UIDocumentInteractionController interactionControllerWithURL:fileURL];
+        self.documentController.UTI = @"com.instagram.exclusivegram";
+        self.documentController.delegate = self;
         
         NSString *caption = [alertView textFieldAtIndex:0].text;
         
         if (caption.length > 0) {
-            documentController.annotation = @{@"InstagramCaption": caption};
+            self.documentController.annotation = @{@"InstagramCaption": caption};
         }
         
         if (self.sendButton.superview) {
-            [documentController presentOpenInMenuFromRect:self.sendButton.bounds inView:self.sendButton animated:YES];
+            [self.documentController presentOpenInMenuFromRect:self.sendButton.bounds inView:self.sendButton animated:YES];
         } else {
-            [documentController presentOpenInMenuFromBarButtonItem:self.sendBarButton animated:YES];
+            [self.documentController presentOpenInMenuFromBarButtonItem:self.sendBarButton animated:YES];
         }
     }
 }
@@ -402,6 +405,7 @@
 
 - (void)documentInteractionController:(UIDocumentInteractionController *)controller didEndSendingToApplication:(NSString *)application {
     [self dismissViewControllerAnimated:YES completion:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:BLCImageFinishedNotification object:self];
 }
 
 /*
