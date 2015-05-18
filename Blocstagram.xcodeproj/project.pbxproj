@@ -40,6 +40,11 @@
 		499F34621AE3A86000BF0C1A /* CropImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 499F34611AE3A86000BF0C1A /* CropImageViewController.m */; };
 		499F34651AE424BB00BF0C1A /* ImageLibraryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 499F34641AE424BB00BF0C1A /* ImageLibraryViewController.m */; };
 		49A4290C1AEF451E00C59771 /* PostToInstagramViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49A4290B1AEF451E00C59771 /* PostToInstagramViewController.m */; };
+		49D79CF91B0872F6008F5A72 /* BLCUserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D79CF81B0872F6008F5A72 /* BLCUserTests.m */; };
+		49D79CFB1B08767B008F5A72 /* BLCCommentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D79CFA1B08767B008F5A72 /* BLCCommentTests.m */; };
+		49D79CFF1B09526D008F5A72 /* BLCMediaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D79CFE1B09526D008F5A72 /* BLCMediaTests.m */; };
+		49D79D011B095DDD008F5A72 /* ComposeCommentViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D79D001B095DDD008F5A72 /* ComposeCommentViewTests.m */; };
+		49D79D031B0961D9008F5A72 /* MediaTableViewCellTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D79D021B0961D9008F5A72 /* MediaTableViewCellTests.m */; };
 		49D91E7D1AFB8D3F00E51CF9 /* FilterCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D91E7C1AFB8D3F00E51CF9 /* FilterCollectionViewCell.m */; };
 		49FE17901A98DF10001472EA /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49FE178F1A98DF10001472EA /* LoginViewController.m */; };
 		DE0BD6AE81B403AA049E0436 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 710B6620FFECA9C88D9EC25A /* libPods.a */; };
@@ -113,6 +118,11 @@
 		499F34641AE424BB00BF0C1A /* ImageLibraryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageLibraryViewController.m; sourceTree = "<group>"; };
 		49A4290A1AEF451E00C59771 /* PostToInstagramViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostToInstagramViewController.h; sourceTree = "<group>"; };
 		49A4290B1AEF451E00C59771 /* PostToInstagramViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostToInstagramViewController.m; sourceTree = "<group>"; };
+		49D79CF81B0872F6008F5A72 /* BLCUserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BLCUserTests.m; sourceTree = "<group>"; };
+		49D79CFA1B08767B008F5A72 /* BLCCommentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BLCCommentTests.m; sourceTree = "<group>"; };
+		49D79CFE1B09526D008F5A72 /* BLCMediaTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BLCMediaTests.m; path = ../Blocstagram/BLCMediaTests.m; sourceTree = "<group>"; };
+		49D79D001B095DDD008F5A72 /* ComposeCommentViewTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ComposeCommentViewTests.m; path = ../Blocstagram/ComposeCommentViewTests.m; sourceTree = "<group>"; };
+		49D79D021B0961D9008F5A72 /* MediaTableViewCellTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MediaTableViewCellTests.m; path = ../Blocstagram/MediaTableViewCellTests.m; sourceTree = "<group>"; };
 		49D91E7B1AFB8D3F00E51CF9 /* FilterCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterCollectionViewCell.h; sourceTree = "<group>"; };
 		49D91E7C1AFB8D3F00E51CF9 /* FilterCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FilterCollectionViewCell.m; sourceTree = "<group>"; };
 		49FE178E1A98DF10001472EA /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
@@ -228,6 +238,11 @@
 			isa = PBXGroup;
 			children = (
 				494EA1A61A66478000631C1F /* BlocstagramTests.m */,
+				49D79CFE1B09526D008F5A72 /* BLCMediaTests.m */,
+				49D79CF81B0872F6008F5A72 /* BLCUserTests.m */,
+				49D79D021B0961D9008F5A72 /* MediaTableViewCellTests.m */,
+				49D79D001B095DDD008F5A72 /* ComposeCommentViewTests.m */,
+				49D79CFA1B08767B008F5A72 /* BLCCommentTests.m */,
 				494EA1A41A66478000631C1F /* Supporting Files */,
 			);
 			path = BlocstagramTests;
@@ -448,7 +463,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49D79D031B0961D9008F5A72 /* MediaTableViewCellTests.m in Sources */,
+				49D79CF91B0872F6008F5A72 /* BLCUserTests.m in Sources */,
 				494EA1A71A66478000631C1F /* BlocstagramTests.m in Sources */,
+				49D79CFF1B09526D008F5A72 /* BLCMediaTests.m in Sources */,
+				49D79CFB1B08767B008F5A72 /* BLCCommentTests.m in Sources */,
+				49D79D011B095DDD008F5A72 /* ComposeCommentViewTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
