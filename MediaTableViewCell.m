@@ -44,7 +44,7 @@ static NSParagraphStyle *paragraphStyle;
     boldFont = [UIFont fontWithName:@"HelveticaNeue-Bold" size:11];
     usernameLabelGrey = [UIColor colorWithRed:0.933 green:0.933 blue:0.933 alpha:1]; /*eeeeee*/
     commentLabelGrey = [UIColor colorWithRed:0.898 green:0.898 blue:0.898 alpha:1]; /*#e5e5e5*/
-    linkColor = [UIColor colorWithRed:0.345 green:0.314 blue:0.427 alpha:1]; /*#58506d*/
+    linkColor = [UIColor colorWithRed:0.345 green:0.814 blue:0.427 alpha:1]; /*#58506d*/
     NSMutableParagraphStyle *mutableParagraphStyle = [[NSMutableParagraphStyle alloc] init];
     mutableParagraphStyle.headIndent = 20.0;
     mutableParagraphStyle.firstLineHeadIndent = 20.0;
